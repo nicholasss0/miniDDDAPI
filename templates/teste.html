@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Região por DDD</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        form {
+            margin: 20px 0;
+        }
+
+        input {
+            padding: 10px;
+            font-size: 16px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px 15px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #555;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Consulta de Região por DDD</h1>
+    <form id="dddForm">
+        <input type="text" id="phoneNumber" placeholder="Digite o número (ex: 11912345678)" required>
+        <button type="submit">Consultar</button>
+    </form>
+    <div id="result"></div>
+
+    <script>
+        document.getElementById('dddForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const phoneNumber = document.getElementById('phoneNumber').value.trim();
+            const resultDiv = document.getElementById('result');
+
+            // Limpa resultado anterior
+            resultDiv.innerHTML = '';
+
+            // Validação básica
+            if (phoneNumber.length < 2) {
+                resultDiv.innerHTML = '<span class="error">Por favor, insira um número válido!</span>';
+                return;
+            }
+
+            try {
+                // Faz a requisição para a API
+                const response = await fetch(`http://127.0.0.1:3003/region/${phoneNumber}`);
+                const data = await response.json();
+
+                if (data && data.region) {
+                    resultDiv.innerHTML = `DDD <strong>${data.ddd}</strong>: ${data.region}`;
+                } else {
+                    resultDiv.innerHTML = '<span class="error">DDD não encontrado.</span>';
+                }
+            } catch (error) {
+                console.error(error);
+                resultDiv.innerHTML = '<span class="error">Erro ao consultar a API.</span>';
+            }
+        });
+    </script>
+</body>
+
+</html>
