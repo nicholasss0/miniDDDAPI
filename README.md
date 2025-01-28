@@ -78,7 +78,7 @@ A API estará disponível em `http://127.0.0.1:3003`.
   "11": "São Paulo",
   "21": "Rio de Janeiro",
   "61": "Distrito Federal"
-//   {...}
+//   ...
 }
 ```
 
@@ -114,7 +114,3 @@ basta carregá-lo no navegador
 ## Licença
 Este projeto um código aberto. Sinta-se à vontade para baixá-lo, utilizá-lo e modificá-lo conforme necessário.
 
----
-
-## Contato
-Para dúvidas ou sugestões, entre em contato pelo e-mail: [seuemail@exemplo.com](mailto:seuemail@exemplo.com).
