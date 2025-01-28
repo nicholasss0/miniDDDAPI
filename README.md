@@ -1,85 +1,120 @@
-# API de Consulta de Regiões por Número de Telefone
+# API de Consulta de Região por Número de Telefone
 
-Essa é uma API simples construída com Python no framework FastAPI. Sua funcionalidade principal é retornar a região associada ao DDD de um número de telefone fornecido. 
-
-A API também possui uma rota que lista todos os DDDs e suas respectivas regiões no Brasil.
+Esta é uma API simples desenvolvida em Python utilizando o framework **FastAPI**. Ela retorna a região do Brasil com base no número de telefone recebido (a partir do DDD) ou apresenta uma lista de todos os DDDs e suas respectivas regiões.
 
 ## Funcionalidades
 
-- **Listar DDDs**: Retorna todos os DDDs com suas respectivas regiões no Brasil.
-- **Consultar Região**: Recebe um número de telefone e retorna a região correspondente ao DDD.
+- **Rota 1:** Listar todos os DDDs e suas regiões no Brasil.
+- **Rota 2:** Receber um número de telefone e retornar a região correspondente ao DDD.
 
-## Pré-requisitos
+A API roda na porta **3003** e conta com correção de CORS mediada pelo **Uvicorn**.
 
+---
+
+## Instalação e Uso
+
+Siga os passos abaixo para configurar e rodar a API em sua máquina local:
+
+### Pré-requisitos
 - Python 3.8 ou superior
+- Gerenciador de pacotes `pip`
 
-## Instalação
+### Passo 1: Clonar o Repositório
 
-1. Clone o repositório em sua máquina:
+Clone este repositório em sua máquina local:
+```bash
+git clone <URL_DO_REPOSITORIO>
+cd <NOME_DO_REPOSITORIO>
+```
 
-   ```bash
-   git clone <url-do-repositorio>
-   cd <nome-do-repositorio>
-   ```
+### Passo 2: Criar um Ambiente Virtual
 
-2. Crie e ative um ambiente virtual:
+Crie um ambiente virtual para isolar as dependências do projeto:
+```bash
+python -m venv .venv
+```
+Ative o ambiente virtual:
+- No Windows:
+  ```bash
+  .venv\Scripts\activate
+  ```
+- No Linux/macOS:
+  ```bash
+  source .venv/bin/activate
+  ```
 
-   ```bash
-   python -m venv .venv
-   source .venv/bin/activate  # No Windows: .venv\Scripts\activate
-   ```
+### Passo 3: Instalar Dependências
 
-3. Instale as dependências listadas no `requirements.txt`:
+Instale as dependências listadas no arquivo `requirements.txt`:
+```bash
+pip install -r requirements.txt
+```
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+### Passo 4: Rodar a API
 
-## Executando a API
+A API inicia o servidor local automaticamente utilizando o Uvicorn, 
+bastando apenas executar o script main.py:
 
-1. Inicie o servidor usando o Uvicorn:
+```bash
+python main.py
+```
 
-   ```bash
-   uvicorn main:app --host 0.0.0.0 --port 3003
-   ```
+A API estará disponível em `http://127.0.0.1:3003`.
 
-2. Acesse a documentação interativa da API em seu navegador:
+---
 
-   - [http://localhost:3003/docs](http://localhost:3003/docs) (Swagger UI)
-   - [http://localhost:3003/redoc](http://localhost:3003/redoc) (ReDoc)
+## Endpoints
 
-## Rotas
+### 1. **Obter todos os DDDs e regiões**
+**Rota:** `/ddds`
 
-### `GET /ddds`
-Retorna todos os DDDs com suas respectivas regiões no Brasil.
+**Método:** `GET`
 
-#### Exemplo de resposta:
+**Descrição:** Retorna um JSON com todos os DDDs e suas respectivas regiões no Brasil.
+
+**Exemplo de Resposta:**
 ```json
 {
   "11": "São Paulo",
   "21": "Rio de Janeiro",
-  "31": "Belo Horizonte"
+  "61": "Distrito Federal"
+//   {...}
 }
 ```
 
-### `POST /regiao`
-Recebe um número de telefone e retorna a região correspondente ao DDD.
+### 2. **Consultar região por número de telefone**
+**Rota:** `/regiao`
 
-#### Corpo da requisição:
+**Método:** `POST`
+
+**Descrição:** Recebe um número de telefone e retorna a região correspondente ao DDD.
+
+**Exemplo de Requisição:**
 ```json
 {
   "telefone": "11987654321"
 }
 ```
 
-#### Exemplo de resposta:
+**Exemplo de Resposta:**
 ```json
 {
-  "ddd": "11",
   "regiao": "São Paulo"
 }
 ```
+---
 
-## Tratamento de CORS
-O suporte a CORS é habilitado na API para garantir a comunicação com outros domínios.
+## Testando a API
 
+O projeto tem um arquivo **templates/index.html** para testar o funcionamento da API, 
+basta carregá-lo no navegador
+
+---
+
+## Licença
+Este projeto um código aberto. Sinta-se à vontade para baixá-lo, utilizá-lo e modificá-lo conforme necessário.
+
+---
+
+## Contato
+Para dúvidas ou sugestões, entre em contato pelo e-mail: [seuemail@exemplo.com](mailto:seuemail@exemplo.com).
