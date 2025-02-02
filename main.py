@@ -92,6 +92,8 @@ async def get_region(phone_number: str):
     
     if ddd in DDD_REGIONS:
         return {"ddd": ddd, "region": DDD_REGIONS[ddd]}
+    else:
+        return {"invalid area code"}
 
 
 
