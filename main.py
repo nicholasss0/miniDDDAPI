@@ -102,4 +102,4 @@ async def get_ddds():
     return DDD_REGIONS
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.01", port=3003)
+    uvicorn.run(app, host="0.0.0.0", port=3003)
