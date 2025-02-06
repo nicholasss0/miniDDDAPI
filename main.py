@@ -5,11 +5,14 @@ from datetime import datetime, timedelta
 from typing import Optional
 from jose import JWTError, jwt
 from passlib.context import CryptContext
+from dotenv import load_dotenv
+import os
 import uvicorn
 
 app = FastAPI()
 
-# Configuração do CORS
+load_dotenv()
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -18,8 +21,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Configuração do JWT
-SECRET_KEY = "secret-key-para-mudar"
+SECRET_KEY = os.getenv('SECRET_KEY')
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
@@ -96,18 +98,15 @@ DDD_REGIONS = {
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-# Banco de usuários fixo para exemplo (em produção, utilize hash de senha)
 fake_users_db = {
     "admin": {
-        "username": "admin",
-        "password": "1234"  # Em produção, armazene o hash da senha
+        "username": os.getenv('USERNAME'),
+        "password": os.getenv('PASSWORD')
     }
 }
 
-# Configuração do hash de senhas
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-# Funções auxiliares
 
 
 def verify_password(plain_password, hashed_password):
@@ -120,8 +119,6 @@ def get_user(db, username: str):
 
 def authenticate_user(username: str, password: str):
     user = get_user(fake_users_db, username)
-    # Se for utilizar hash, descomente a linha abaixo e armazene o hash em fake_users_db:
-    # if not user or not verify_password(password, user["password"]):
     if not user or user["password"] != password:
         return False
     return user
@@ -157,7 +154,6 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
             detail="Token inválido"
         )
 
-# Rota para obter token JWT
 
 
 @app.post("/token")
@@ -175,7 +171,6 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
-# Dicionário de DDDs
 
 
 @app.get("/region/{phone_number}")
