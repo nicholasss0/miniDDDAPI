@@ -18,12 +18,13 @@
             height: 100vh;
         }
 
-        h1 {
+        h1,
+        h2 {
             color: #333;
         }
 
         form {
-            margin: 20px 0;
+            margin: 10px 0;
         }
 
         input {
@@ -62,41 +63,97 @@
 
 <body>
     <h1>Consulta de Região por DDD</h1>
-    <form id="dddForm">
+
+    <!-- Formulário de Login -->
+    <h2>Login</h2>
+    <form id="loginForm">
+        <input type="text" id="username" placeholder="Usuário" required>
+        <input type="password" id="password" placeholder="Senha" required>
+        <button type="submit">Entrar</button>
+    </form>
+
+    <p id="loginStatus"></p>
+
+    <!-- Formulário de Consulta -->
+    <form id="dddForm" style="display: none;">
         <input type="text" id="phoneNumber" placeholder="Digite o número (ex: 11912345678)" required>
         <button type="submit">Consultar</button>
     </form>
     <div id="result"></div>
 
     <script>
+        const API_URL = "http://127.0.0.1:3003";
+
+        // Login e obtenção do token
+        document.getElementById('loginForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const loginStatus = document.getElementById('loginStatus');
+
+            try {
+                const response = await fetch(`${API_URL}/token`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: new URLSearchParams({ username, password })
+                });
+
+                if (!response.ok) {
+                    throw new Error("Usuário ou senha inválidos.");
+                }
+
+                const data = await response.json();
+                localStorage.setItem("token", data.access_token);
+
+                loginStatus.textContent = "Login realizado com sucesso!";
+                loginStatus.style.color = "green";
+
+                document.getElementById("loginForm").style.display = "none";
+                document.getElementById("dddForm").style.display = "block";
+
+            } catch (error) {
+                loginStatus.textContent = error.message;
+                loginStatus.style.color = "red";
+            }
+        });
+
+        // Consulta de DDD com autenticação
         document.getElementById('dddForm').addEventListener('submit', async function (e) {
             e.preventDefault();
 
             const phoneNumber = document.getElementById('phoneNumber').value.trim();
             const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = "";
 
-            // Limpa resultado anterior
-            resultDiv.innerHTML = '';
-
-            // Validação básica
             if (phoneNumber.length < 2) {
                 resultDiv.innerHTML = '<span class="error">Por favor, insira um número válido!</span>';
                 return;
             }
 
-            try {
-                // Faz a requisição para a API
-                const response = await fetch(`http://127.0.0.1:3003/region/${phoneNumber}`);
-                const data = await response.json();
+            const token = localStorage.getItem("token");
+            if (!token) {
+                resultDiv.innerHTML = '<span class="error">Você precisa fazer login primeiro.</span>';
+                return;
+            }
 
-                if (data && data.region) {
-                    resultDiv.innerHTML = `DDD <strong>${data.ddd}</strong>: ${data.region}`;
-                } else {
-                    resultDiv.innerHTML = '<span class="error">DDD não encontrado.</span>';
+            try {
+                const response = await fetch(`${API_URL}/region/${phoneNumber}`, {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+
+                if (!response.ok) {
+                    throw new Error("Erro ao consultar a API. Verifique seu login.");
                 }
+
+                const data = await response.json();
+                resultDiv.innerHTML = data.region
+                    ? `DDD <strong>${data.ddd}</strong>: ${data.region}`
+                    : '<span class="error">DDD não encontrado.</span>';
+
             } catch (error) {
                 console.error(error);
-                resultDiv.innerHTML = '<span class="error">Erro ao consultar a API.</span>';
+                resultDiv.innerHTML = `<span class="error">${error.message}</span>`;
             }
         });
     </script>

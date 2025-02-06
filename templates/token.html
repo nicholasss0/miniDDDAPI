@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exemplo de API com JWT</title>
+</head>
+
+<body>
+    <h1>API com JWT - Exemplo</h1>
+    <button onclick="getToken()">Obter Token</button>
+    <p><strong>Token:</strong> <span id="token"></span></p>
+    <script>
+        async function getToken() {
+            try {
+                const response = await fetch('http://127.0.0.1:3003/generate_token');
+                const data = await response.json();
+                document.getElementById('token').innerText = data.access_token || "Erro ao obter token";
+            } catch (error) {
+                console.error("Erro ao buscar token:", error);
+                document.getElementById('token').innerText = "Erro ao obter token";
+            }
+        }
+    </script>
+</body>
+
+</html>
